@@ -37,14 +37,10 @@ public class Clipboard extends CordovaPlugin {
                 callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, e.toString()));
             }
         } else if (action.equals(actionPaste)) {
-            if (!clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.NO_RESULT));
-            }
-
             try {
                 ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-                String text = item.getText().toString();
-
+                // Coerce into text to support HTML text
+                String text = item.coerceToText().toString();
                 if (text == null) text = "";
 
                 callbackContext.success(text);
@@ -58,5 +54,3 @@ public class Clipboard extends CordovaPlugin {
         return false;
     }
 }
-
-
